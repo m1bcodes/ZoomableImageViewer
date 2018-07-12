@@ -165,5 +165,10 @@ namespace ZoomableImageViewerDemo
             zoomableImageViewer1.Invalidate();
             
         }
+
+        private void zoomableImageViewer1_e_MousePositionChanged(object sender, PointF location, object valueUnderCursor)
+        {
+            toolStripStatusLabel1.Text = string.Format("Mouse position: ({0},{1}) : {2}", location.X, location.Y, valueUnderCursor?.ToString());
+        }
     }
 }
