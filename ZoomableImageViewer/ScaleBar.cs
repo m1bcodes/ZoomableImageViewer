@@ -21,9 +21,10 @@ namespace ZoomableImageViewer
             Location = new Point(30, -40);
         }
 
-        public bool findHandle(PointF point, Func<PointF, PointF> abs2scr, out int index)
+        public bool findHandle(PointF point, Func<PointF, PointF> abs2scr, out int index, out PointF clickOffset)
         {
             index = -1;
+            clickOffset = new PointF();
             return false;
         }
 

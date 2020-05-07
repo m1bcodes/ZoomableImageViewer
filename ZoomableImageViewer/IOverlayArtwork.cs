@@ -51,8 +51,10 @@ namespace ZoomableImageViewer
         /// <param name="point">Mouse coordinate (in absolute coordinates)</param>
         /// <param name="abs2scr">Transformation function</param>
         /// <param name="index">a handle to the drag handle (eturns -1 if no handle was found).</param>
+        /// <param name="clickOffset">the difference between the position of the drag handle and 
+        /// the position of the mouse clock point (in screen coordinates)</param>
         /// <returns></returns>
-        bool findHandle(PointF point, Func<PointF, PointF> abs2scr, out int index);
+        bool findHandle(PointF point, Func<PointF, PointF> abs2scr, out int index, out PointF clickOffset);
 
         /// <summary>
         /// returns the cursor for the specified handle

@@ -101,6 +101,9 @@ namespace ZoomableImageViewerDemo
             propertyGrid1.SelectedObject = oa;
             zoomableImageViewer1.Overlays.Add(oa);
 
+            oa = new RectangleOverlayArtwork(new Rectangle(400, 500, 200, 300), 30f / 180f * 3.14159f, Color.Red);
+            zoomableImageViewer1.Overlays.Add(oa);
+
             ZoomableImageViewer.HScaleBar hs = new ZoomableImageViewer.HScaleBar(1, "Hallo {0} {1}m", Color.Green);
             hs.Scale = 10e-9f;
             zoomableImageViewer1.Overlays.Add(hs);
@@ -108,6 +111,9 @@ namespace ZoomableImageViewerDemo
             ZoomableImageViewer.HScaleBar vs = new ZoomableImageViewer.VScaleBar(1, "Vallo {0} {1}m", Color.Green);
             vs.Scale = 10e-9f;
             zoomableImageViewer1.Overlays.Add(vs);
+
+            ZoomableImageViewer.VCursorOverlayArtwork vc = new VCursorOverlayArtwork(0);
+            zoomableImageViewer1.Overlays.Add(vc);
 
             toolStrip1.Items.Add(new ToolStripSeparator());
             zoomableImageViewer1.AppendToolStrip(toolStrip1);
@@ -169,6 +175,12 @@ namespace ZoomableImageViewerDemo
         private void zoomableImageViewer1_e_MousePositionChanged(object sender, PointF location, object valueUnderCursor)
         {
             toolStripStatusLabel1.Text = string.Format("Mouse position: ({0},{1}) : {2}", location.X, location.Y, valueUnderCursor?.ToString());
+        }
+
+        private void zoomableImageViewer1_e_OverArtworkSelectedEventHandler(IOverlayArtwork sender)
+        {
+            Console.WriteLine("OA selected");
+            propertyGrid1.SelectedObject = sender;
         }
     }
 }

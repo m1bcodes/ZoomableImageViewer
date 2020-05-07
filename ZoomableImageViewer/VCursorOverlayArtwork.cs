@@ -42,17 +42,19 @@ namespace ZoomableImageViewer
             Position = position;
         }
 
-        public bool findHandle(PointF point, Func<PointF, PointF> abs2scr, out int index)
+        public bool findHandle(PointF point, Func<PointF, PointF> abs2scr, out int index, out PointF clickOffset)
         {
             PointF p1 = abs2scr(point);
             PointF p2 = abs2scr(new PointF(Position, 0));
             if(Math.Abs(p1.X-p2.X) < 10)
             {
                 index = 1;
+                clickOffset = new PointF(p2.X - p1.X, p2.Y - p1.Y);
                 return true;
             } else
             {
                 index = -1;
+                clickOffset = new PointF();
                 return false;
             }
         }

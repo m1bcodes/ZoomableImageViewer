@@ -163,7 +163,7 @@ namespace ZoomableImageViewer
             m_dragHandles[hiLeft] = m_left = new DragHandle(0, 0, color);
             m_dragHandles[hiCenter] = m_center = new DragHandle(0, 0, color);
             m_dragHandles[hiRotate] = m_rotate = new DragHandle(0, 0, color);
-
+            m_color = color;
             rearrangeHandles(-1);
         }
 
@@ -215,7 +215,7 @@ namespace ZoomableImageViewer
             return prot;
         }
 
-         public bool findHandle(PointF point, Func<PointF, PointF> abs2scr, out int index)
+         public bool findHandle(PointF point, Func<PointF, PointF> abs2scr, out int index, out PointF clickOffset)
         {
             for (int i = 0; i < m_dragHandles.Length; i++)
             {
@@ -226,16 +226,21 @@ namespace ZoomableImageViewer
                     if (Math.Abs(p1.X - p2.X) <= m_rotate.Size / 2 && Math.Abs(p1.Y - p2.Y) <= m_rotate.Size / 2)
                     {
                         index = i;
+                        clickOffset = new PointF(p2.X - p1.X, p2.Y - p1.Y);
                         return true;
                     }
                 }
                 else if (m_dragHandles[i].Visible && m_dragHandles[i].Test(point, abs2scr))
                 {
                     index = i;
+                    PointF p1 = abs2scr(point);
+                    PointF p2 = abs2scr(m_dragHandles[i].Location);
+                    clickOffset = new PointF(p2.X - p1.X, p2.Y - p1.Y);
                     return true;
                 }
             }
             index = -1;
+            clickOffset = new PointF();
             return false;
         }
 

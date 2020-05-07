@@ -37,9 +37,11 @@ namespace ZoomableImageViewer
 {
 
     public delegate void MousePositionChangedEventHandler(object sender, PointF location, object valueUnderCursor);
+    public delegate void OverArtworkSelectedEventHandler(IOverlayArtwork sender);
+
     public partial class ZoomableImageViewer : ScrollableControl
     {
-
+        #region private declarations
         Image m_image;
         List<IImageLayer> m_imageList;
         List<IOverlayArtwork> m_overlayList;
@@ -60,6 +62,7 @@ namespace ZoomableImageViewer
         DragMode m_dragActive = DragMode.dmNone;
         Point m_dragStartPoint;
         Point m_dragStartScrollPosition;
+        PointF m_dragHandleMouseOffset;
         Rectangle m_dragWindowRectangle = new Rectangle();
         IOverlayArtwork m_dragOa = null;
         int m_dragIndex = -1;
@@ -69,9 +72,10 @@ namespace ZoomableImageViewer
         Image m_imgCache;
         RectangleF m_cachedSrcRect;
         RectangleF m_cachedDstRect;
+        #endregion
 
         public event MousePositionChangedEventHandler e_MousePositionChanged;
-
+        public event OverArtworkSelectedEventHandler e_OverArtworkSelectedEventHandler;
         public ZoomableImageViewer()
         {
             // base.InitializeComponent();
@@ -172,11 +176,11 @@ namespace ZoomableImageViewer
             }
         }
 
-        private bool findHandle(PointF location, out IOverlayArtwork oa, out int index)
+        private bool findHandle(PointF location, out IOverlayArtwork oa, out int index, out PointF clickOffset)
         {
             foreach (IOverlayArtwork ioa in m_overlayList)
             {
-                if (ioa.findHandle(location, abs2scr, out index))
+                if (ioa.findHandle(location, abs2scr, out index, out clickOffset))
                 {
                     oa = ioa;
                     return true;
@@ -184,6 +188,7 @@ namespace ZoomableImageViewer
             }
             index = -1;
             oa = null;
+            clickOffset = new PointF();
             return false;
         }
 
@@ -234,7 +239,8 @@ namespace ZoomableImageViewer
 
             if (m_dragActive == DragMode.dmDragHandle)
             {
-                m_dragOa.moveHandle(m_dragIndex, loc);
+                m_dragOa.moveHandle(m_dragIndex, 
+                    new PointF(absx(e.Location.X + m_dragHandleMouseOffset.X), absy(e.Location.Y + m_dragHandleMouseOffset.Y)));
                 Invalidate();
             }
             else if (m_dragActive == DragMode.dmPan)
@@ -257,7 +263,7 @@ namespace ZoomableImageViewer
             {
                 IOverlayArtwork oa;
                 int index;
-                if (findHandle(loc, out oa, out index))
+                if (findHandle(loc, out oa, out index, out _))
                 {
                     this.Cursor = oa.getCursor(index);
                 }
@@ -288,11 +294,12 @@ namespace ZoomableImageViewer
                 {
                     IOverlayArtwork oa;
                     int index;
-                    if (findHandle(loc, out oa, out index))
+                    if (findHandle(loc, out oa, out index, out m_dragHandleMouseOffset))
                     {
                         m_dragActive = DragMode.dmDragHandle;
                         m_dragOa = oa;
                         m_dragIndex = index;
+                        e_OverArtworkSelectedEventHandler(oa);
                     }
                 }
             }
