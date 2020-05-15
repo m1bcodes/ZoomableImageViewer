@@ -101,7 +101,7 @@ namespace ZoomableImageViewerDemo
             propertyGrid1.SelectedObject = oa;
             zoomableImageViewer1.Overlays.Add(oa);
 
-            oa = new RectangleOverlayArtwork(new Rectangle(400, 500, 200, 300), 30f / 180f * 3.14159f, Color.Red);
+            oa = new RectangleOverlayArtwork(new Rectangle(400, 500, 200, 300), 0f / 180f * 3.14159f, Color.Red);
             zoomableImageViewer1.Overlays.Add(oa);
 
             ZoomableImageViewer.HScaleBar hs = new ZoomableImageViewer.HScaleBar(1, "Hallo {0} {1}m", Color.Green);

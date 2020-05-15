@@ -32,6 +32,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Schema;
 
 namespace ZoomableImageViewer
 {    
@@ -48,7 +49,7 @@ namespace ZoomableImageViewer
                 updateHandleVisibility();
             }
         }
-        public bool AllowAspectChange { get; set; } = true;
+        public bool Square { get; set; } = false;
 
         private bool m_ShowRotateHandle = true;
         public bool ShowRotateHandle
@@ -263,29 +264,29 @@ namespace ZoomableImageViewer
                     break;
 
                 case hiTopLeft:
-                    adjustSize(m_topleft.Location, m_bottomright.Location, m_center.Location, m_angle, AdjustSizeRestriction.None, ref m_xc, ref m_yc, ref m_width, ref m_height);
+                    adjustSize(m_topleft.Location, m_bottomright.Location, m_center.Location, m_angle, AdjustSizeRestriction.None, Square, -1.0f, -1.0f, ref m_xc, ref m_yc, ref m_width, ref m_height);
                     break;
                 case hiTopRight:
-                    adjustSize(m_topright.Location, m_bottomleft.Location, m_center.Location, m_angle, AdjustSizeRestriction.None, ref m_xc, ref m_yc, ref m_width, ref m_height);
+                    adjustSize(m_topright.Location, m_bottomleft.Location, m_center.Location, m_angle, AdjustSizeRestriction.None, Square, +1.0f, -1.0f, ref m_xc, ref m_yc, ref m_width, ref m_height);
                     break;
                 case hiBottomRight:
-                    adjustSize(m_bottomright.Location, m_topleft.Location, m_center.Location, m_angle, AdjustSizeRestriction.None, ref m_xc, ref m_yc, ref m_width, ref m_height);
+                    adjustSize(m_bottomright.Location, m_topleft.Location, m_center.Location, m_angle, AdjustSizeRestriction.None, Square, +1.0f, +1.0f, ref m_xc, ref m_yc, ref m_width, ref m_height);
                     break;
                 case hiBottomLeft:
-                    adjustSize(m_bottomleft.Location, m_topright.Location, m_center.Location, m_angle, AdjustSizeRestriction.None, ref m_xc, ref m_yc, ref m_width, ref m_height);
+                    adjustSize(m_bottomleft.Location, m_topright.Location, m_center.Location, m_angle, AdjustSizeRestriction.None, Square, -1.0f, +1.0f, ref m_xc, ref m_yc, ref m_width, ref m_height);
                     break;
 
                 case hiTop:
-                    adjustSize(m_top.Location, m_bottom.Location, m_center.Location, m_angle, AdjustSizeRestriction.Height, ref m_xc, ref m_yc, ref dummy, ref m_height);                    
+                    adjustSize(m_top.Location, m_bottom.Location, m_center.Location, m_angle, AdjustSizeRestriction.Height, Square, 0.0f, -1.0f, ref m_xc, ref m_yc, ref m_width, ref m_height);                    
                     break;
                 case hiRight:
-                    adjustSize(m_right.Location, m_left.Location, m_center.Location, m_angle, AdjustSizeRestriction.Width, ref m_xc, ref m_yc, ref m_width, ref dummy);
+                    adjustSize(m_right.Location, m_left.Location, m_center.Location, m_angle, AdjustSizeRestriction.Width, Square, +1.0f, 0.0f, ref m_xc, ref m_yc, ref m_width, ref m_height);
                     break;
                 case hiBottom:
-                    adjustSize(m_bottom.Location, m_top.Location, m_center.Location, m_angle, AdjustSizeRestriction.Height, ref m_xc, ref m_yc, ref dummy, ref m_height);
+                    adjustSize(m_bottom.Location, m_top.Location, m_center.Location, m_angle, AdjustSizeRestriction.Height, Square, 0.0f, +1.0f, ref m_xc, ref m_yc, ref m_width, ref m_height);
                     break;
                 case hiLeft:
-                    adjustSize(m_left.Location, m_right.Location, m_center.Location, m_angle, AdjustSizeRestriction.Width, ref m_xc, ref m_yc, ref m_width, ref dummy);
+                    adjustSize(m_left.Location, m_right.Location, m_center.Location, m_angle, AdjustSizeRestriction.Width, Square, -1.0f, 0.0f, ref m_xc, ref m_yc, ref m_width, ref m_height);
                     break;
             }
 
@@ -307,80 +308,77 @@ namespace ZoomableImageViewer
             Height
         };
 
+        /// <summary>
+        /// adjust the size of the rectangle, based on the handle that has been dragged.
+        /// </summary>
+        /// <param name="moveLoc">location of the handle, that is currently dragged.</param>
+        /// <param name="fixLoc">location of the opposite handle.</param>
+        /// <param name="centerLoc">location of the center of the rectangle</param>
+        /// <param name="angle">the rotation angle of the rectangle</param>
+        /// <param name="restrictPos">tells if resize is currently restricted to x,y or not restricted</param>
+        /// <param name="wsign">tells the "direction" of the width w.r.t to the handle that is dragged.</param>
+        /// <param name="hsign">...same for the height</param>
+        /// <param name="m_xc"></param>
+        /// <param name="m_yc"></param>
+        /// <param name="m_width"></param>
+        /// <param name="m_height"></param>
         private static void adjustSize(PointF moveLoc, PointF fixLoc, PointF centerLoc, float angle, 
-            AdjustSizeRestriction restrictPos, ref float m_xc, ref float m_yc, ref float m_width, ref float m_height)
+            AdjustSizeRestriction restrictPos, bool fixAspect, float wsign, float hsign, ref float m_xc, ref float m_yc, ref float m_width, ref float m_height)
         {
             bool keepSymmetry = (Control.ModifierKeys & Keys.Control) != Keys.None;
-            bool keepAspect = (Control.ModifierKeys & Keys.Shift) != Keys.None;
+            bool keepAspect = fixAspect || (Control.ModifierKeys & Keys.Shift) != Keys.None;
 
-            //if(keepAspect && restrictPos==AdjustSizeRestriction.None)
-            //{
-            //    // modify moveLoc
-            //    float aspect = m_height / m_width;
+            float oldWidth = m_width;
+            float oldHeight = m_height;
 
-
-            //    var dist = new PointF(moveLoc.X - start.X, moveLoc.Y - start.Y);
-
-            //    // "normalize" the vector from the ratio
-            //    // normalized vector is the distances with respect to the ratio
-            //    // ratio is (1)x(2). A (20)x(-20) is normalized as (20),(-10)
-            //    var normalized = new PointF(dist.X / m_width, dist.Y / m_height);
-
-            //    // In our (20),(-10) example, we choose the ratio's height 20 as the larger normal.
-            //    // we will base our new size on the height
-            //    var largestNormal = (Math.Abs(normalized.X) > Math.Abs(normalized.Y)
-            //                            ? Math.Abs(normalized.X) : Math.Abs(normalized.Y));
-
-            //    // The calcedX will be 20, calcedY will be 40
-            //    var calcedOffset = new PointF(largestNormal * m_width, largestNormal * m_height);
-
-            //    // reflect the calculation back to the correct quarter
-            //    // final size is (20)x(-40)
-            //    if (dist.X < 0) calcedOffset.X *= -1;
-            //    if (dist.Y < 0) calcedOffset.Y *= -1;
-
-            //    var newPt = new Point(start.X + calcedOffset.X, start.Y + calcedOffset.Y);
-            //}
+            double theta = Math.Atan2(moveLoc.Y - fixLoc.Y, moveLoc.X - fixLoc.X);
+            double beta = theta - angle - Math.PI / 2;
 
             if (keepSymmetry)
             {
-                double theta = Math.Atan2(moveLoc.Y - fixLoc.Y, moveLoc.X - fixLoc.X);
-                double beta = theta - angle - Math.PI / 2;
                 float d = Distance(moveLoc, centerLoc);
-
-                float oldWidth = m_width;
-                float oldHeight = m_height;
 
                 m_height = 2.0f * (float)Math.Abs(d * Math.Cos(beta));
                 m_width = 2.0f * (float)Math.Abs(d * Math.Sin(beta));
-            }
-            else
-            {
-                double theta = Math.Atan2(moveLoc.Y - fixLoc.Y, moveLoc.X - fixLoc.X);
-                double beta = theta - angle - Math.PI / 2;
-                float d = Distance(moveLoc, fixLoc);
-                float d_HalfAxis = Distance(centerLoc, fixLoc);
-                m_height = (float)Math.Abs(d * Math.Cos(beta));
-                m_width = (float)Math.Abs(d * Math.Sin(beta));
-                if (restrictPos == AdjustSizeRestriction.None)
+
+                if (keepAspect)
                 {
-                    m_xc = (moveLoc.X + fixLoc.X) / 2;
-                    m_yc = (moveLoc.Y + fixLoc.Y) / 2;
+                    m_width = Math.Max(m_width, m_height);
+                    m_height = m_width;
                 }
                 else
                 {
-                    float restrictedDimension;
+                    if (restrictPos == AdjustSizeRestriction.Height)
+                        m_width = oldWidth;
                     if (restrictPos == AdjustSizeRestriction.Width)
-                        restrictedDimension = m_width;
-                    else
-                        restrictedDimension = m_height;
-
-                    if (d_HalfAxis > float.Epsilon)
-                    {
-                        m_xc = (float)(fixLoc.X + restrictedDimension / 2 * (centerLoc.X - fixLoc.X) / d_HalfAxis);
-                        m_yc = (float)(fixLoc.Y + restrictedDimension / 2 * (centerLoc.Y - fixLoc.Y) / d_HalfAxis);
-                    }
+                        m_height = oldHeight;
                 }
+            }
+            else
+            {
+                float d = Distance(moveLoc, fixLoc);
+                switch (restrictPos)
+                {
+                    case AdjustSizeRestriction.Width:
+                        m_width = (float)Math.Abs(d * Math.Sin(beta));
+                        if (keepAspect) m_height = m_width;
+                        break;
+                    case AdjustSizeRestriction.Height:
+                        m_height = (float)Math.Abs(d * Math.Cos(beta));
+                        if (keepAspect) m_width = m_height;
+                        break;
+                    case AdjustSizeRestriction.None:
+                        m_width = (float)Math.Abs(d * Math.Sin(beta));
+                        m_height = (float)Math.Abs(d * Math.Cos(beta));
+                        if (keepAspect)
+                        {
+                            m_width = Math.Max(m_width, m_height);
+                            m_height = m_width;
+                        }
+                        break;
+                }
+                m_xc = (float)(fixLoc.X + wsign * m_width / 2 * Math.Cos(angle) - hsign * m_height / 2 * Math.Sin(angle));
+                m_yc = (float)(fixLoc.Y + wsign * m_width / 2 * Math.Sin(angle) + hsign * m_height / 2 * Math.Cos(angle));
             }
         }
 
