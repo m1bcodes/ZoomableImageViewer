@@ -69,7 +69,7 @@ namespace ZoomableImageViewer
             Position = newLocation.X;
         }
 
-        public void Paint(PaintEventArgs e, Func<PointF, PointF> abs2scr)
+        public void Paint(PaintEventArgs e, Func<PointF, PointF> abs2scr, bool selecte)
         {
             float pos = abs2scr(new PointF(Position, 0)).X;
             e.Graphics.DrawLine(Pens.Yellow, pos, e.Graphics.ClipBounds.Top, pos, e.Graphics.ClipBounds.Bottom);

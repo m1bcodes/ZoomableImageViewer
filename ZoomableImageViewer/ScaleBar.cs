@@ -37,7 +37,7 @@ namespace ZoomableImageViewer
         {            
         }
 
-        public virtual void Paint(PaintEventArgs e, Func<PointF, PointF> abs2scr)
+        public virtual void Paint(PaintEventArgs e, Func<PointF, PointF> abs2scr, bool selected)
         {
             float number;
             float width;
@@ -157,7 +157,7 @@ namespace ZoomableImageViewer
             base.getScalebarSize(f, out number, out width);
         }
 
-        public override void Paint(PaintEventArgs e, Func<PointF, PointF> abs2scr)
+        public override void Paint(PaintEventArgs e, Func<PointF, PointF> abs2scr, bool selected)
         {
             float number;
             float width;

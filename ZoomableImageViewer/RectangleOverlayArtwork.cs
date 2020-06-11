@@ -174,9 +174,10 @@ namespace ZoomableImageViewer
             rearrangeHandles(index);
         }
 
-        public void Paint(PaintEventArgs e, Func<PointF, PointF> abs2scr)
+        public void Paint(PaintEventArgs e, Func<PointF, PointF> abs2scr, bool selected)
         {
-            Pen pen = new Pen(m_color);
+            Pen pen = new Pen(m_color, selected ? 3 : 1);
+
             e.Graphics.DrawLine(pen, abs2scr(m_topleft.Location), abs2scr(m_topright.Location));
             e.Graphics.DrawLine(pen, abs2scr(m_topright.Location), abs2scr(m_bottomright.Location));
             e.Graphics.DrawLine(pen, abs2scr(m_bottomright.Location), abs2scr(m_bottomleft.Location));

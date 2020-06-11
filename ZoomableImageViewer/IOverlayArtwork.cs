@@ -43,7 +43,8 @@ namespace ZoomableImageViewer
         /// </summary>
         /// <param name="e">Normal OnPaint arguments</param>
         /// <param name="abs2scr">Transformation function, which transforms absolute to screen coordinates.</param>
-        void Paint(PaintEventArgs e, Func<PointF, PointF> abs2scr);
+        /// <param name="selected">informs artwork, if it is currently selected.</param>
+        void Paint(PaintEventArgs e, Func<PointF, PointF> abs2scr, bool selected);
 
         /// <summary>
         /// finds which handle the mouse if over (if any). Returns -1 if no handle was found.

@@ -43,8 +43,9 @@ namespace ZoomableImageViewer
     {
         #region private declarations
         Image m_image;
-        List<IImageLayer> m_imageList;
-        List<IOverlayArtwork> m_overlayList;
+        List<IImageLayer> m_imageList = new List<IImageLayer>();
+        List<IOverlayArtwork> m_overlayList = new List<IOverlayArtwork>();
+        List<IOverlayArtwork> m_selectedOverlays = new List<IOverlayArtwork>();
 
         float m_scalex = 1;
         float m_scaley = 1;
@@ -79,11 +80,8 @@ namespace ZoomableImageViewer
         public ZoomableImageViewer()
         {
             // base.InitializeComponent();
-            m_imageList = new List<IImageLayer>();
-            m_overlayList = new List<IOverlayArtwork>();
             ZoomWindowEnabled = false;
             DoubleBuffered = true;
-
 
             SetStyle(ControlStyles.Selectable, true);
             TabStop = true;
@@ -164,7 +162,7 @@ namespace ZoomableImageViewer
                 Console.WriteLine("Clip rect = " + e.Graphics.ClipBounds.ToString());
                 foreach (IOverlayArtwork oa in m_overlayList)
                 {
-                    oa.Paint(e, abs2scr);
+                    oa.Paint(e, abs2scr, m_selectedOverlays.Contains(oa));
                 }
 
                 if(Focused)
@@ -192,6 +190,7 @@ namespace ZoomableImageViewer
             return false;
         }
 
+        #region mouse event handlers
         protected override void OnMouseWheel(MouseEventArgs e)
         {
             SuspendDrawing(this);
@@ -299,7 +298,10 @@ namespace ZoomableImageViewer
                         m_dragActive = DragMode.dmDragHandle;
                         m_dragOa = oa;
                         m_dragIndex = index;
-                        e_OverArtworkSelectedEventHandler(oa);
+                        e_OverArtworkSelectedEventHandler?.Invoke(oa);
+                        m_selectedOverlays.Clear();
+                        m_selectedOverlays.Add(oa);
+                        Invalidate();
                     }
                 }
             }
@@ -336,7 +338,9 @@ namespace ZoomableImageViewer
             m_dragActive = DragMode.dmNone;
             base.OnMouseUp(e);
         }
+        #endregion
 
+        #region coordinate transformations
         PointF abs2scr(PointF point)
         {
             return new PointF(point.X * (float)m_scalex + this.AutoScrollPosition.X, point.Y * (float)m_scaley + this.AutoScrollPosition.Y);
@@ -350,7 +354,9 @@ namespace ZoomableImageViewer
         {
             return (y - this.AutoScrollPosition.Y) / (float)m_scaley;
         }
+        #endregion
 
+        #region control overrides
         protected override void OnResize(EventArgs e)
         {
             updateImageParameters();
@@ -377,7 +383,8 @@ namespace ZoomableImageViewer
             base.OnLeave(e);
             Invalidate();
         }
- 
+        #endregion
+
         private void updateImageParameters()
         {
             if (m_image != null)
@@ -413,7 +420,35 @@ namespace ZoomableImageViewer
 
         public List<IImageLayer> Images => m_imageList;
 
-        public List<IOverlayArtwork> Overlays => m_overlayList;
+        #region list access
+        public void AddOverlay(IOverlayArtwork newOverlay)
+        {
+            m_overlayList.Add(newOverlay);
+            Invalidate();
+        }
+
+        public void RemoveOverlay(IOverlayArtwork removeOverlay)
+        {
+            m_selectedOverlays.Remove(removeOverlay);
+            m_overlayList.Remove(removeOverlay);
+            Invalidate();
+        }
+
+        public IReadOnlyCollection<IOverlayArtwork> SelectedOverlays {  get { return m_selectedOverlays.AsReadOnly(); } }
+
+        public void SelectOverlay(IOverlayArtwork oa, bool select = true)
+        {
+            if (select)
+            {
+                m_selectedOverlays.Add(oa);
+            }
+            else
+            {
+                m_selectedOverlays.Remove(oa);
+            }
+            Invalidate();
+        }
+        #endregion
 
         public float DisplayScale
         {
@@ -493,6 +528,7 @@ namespace ZoomableImageViewer
             updateImageParameters();
         }
 
+        #region toolstrip
         public void AppendToolStrip(ToolStrip toolStrip)
         {
             toolStrip.Items.Add("Fit", null, OnToolstripFit);
@@ -531,5 +567,7 @@ namespace ZoomableImageViewer
         {
             this.Fit = true;
         }
+        #endregion
+
     }
 }
