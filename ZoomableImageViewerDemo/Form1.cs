@@ -178,6 +178,11 @@ namespace ZoomableImageViewerDemo
             propertyGrid1.SelectedObject = sender;
         }
 
+        private void zoomableImageViewer1_e_ArtworkChanged(IOverlayArtwork sender)
+        {
+            propertyGrid1.Refresh();
+        }
+
         private void toolStripAddOverlay_Click(object sender, EventArgs e)
         {
             RectangleOverlayArtwork oa = new RectangleOverlayArtwork(new Rectangle(400, 500, 200, 300), 0f / 180f * 3.14159f, Color.Red);
@@ -191,6 +196,11 @@ namespace ZoomableImageViewerDemo
             {
                 zoomableImageViewer1.RemoveOverlay(oa);
             }
+        }
+
+        private void toolStripInvalidate_Click(object sender, EventArgs e)
+        {
+            zoomableImageViewer1.Invalidate();
         }
     }
 }

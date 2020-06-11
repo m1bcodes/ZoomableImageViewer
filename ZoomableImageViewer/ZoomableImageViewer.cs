@@ -38,6 +38,7 @@ namespace ZoomableImageViewer
 
     public delegate void MousePositionChangedEventHandler(object sender, PointF location, object valueUnderCursor);
     public delegate void OverArtworkSelectedEventHandler(IOverlayArtwork sender);
+    public delegate void ArtworkChanged(IOverlayArtwork sender);
 
     public partial class ZoomableImageViewer : ScrollableControl
     {
@@ -77,6 +78,8 @@ namespace ZoomableImageViewer
 
         public event MousePositionChangedEventHandler e_MousePositionChanged;
         public event OverArtworkSelectedEventHandler e_OverArtworkSelectedEventHandler;
+        public event ArtworkChanged e_ArtworkChanged;
+
         public ZoomableImageViewer()
         {
             // base.InitializeComponent();
@@ -334,6 +337,13 @@ namespace ZoomableImageViewer
                 PointF asPos = abs2scr(new PointF(x1, y1));
                 AutoScrollPosition = new Point((int)asPos.X, (int)asPos.Y); 
                 m_dragWindowRectangle = new Rectangle() ;
+            }
+            if(m_dragActive == DragMode.dmDragHandle)
+            {
+                if (m_dragOa != null && e_ArtworkChanged != null)
+                {
+                    e_ArtworkChanged(m_dragOa);
+                }
             }
             m_dragActive = DragMode.dmNone;
             base.OnMouseUp(e);

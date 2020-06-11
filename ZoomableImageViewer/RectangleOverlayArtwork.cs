@@ -38,7 +38,8 @@ namespace ZoomableImageViewer
 {    
 
     public class RectangleOverlayArtwork : IOverlayArtwork
-    {       
+    {
+        #region Properties
         private bool m_allowResize = true;
         public bool AllowResize
         {
@@ -49,7 +50,21 @@ namespace ZoomableImageViewer
                 updateHandleVisibility();
             }
         }
-        public bool Square { get; set; } = false;
+
+        bool m_Square = false;
+        public bool Square
+        {
+            get { return m_Square; }
+            set
+            {
+                m_Square = value;
+                if(m_Square)
+                {
+                    m_height = m_width;
+                    rearrangeHandles(-1);
+                }
+            }
+        }      
 
         private bool m_ShowRotateHandle = true;
         public bool ShowRotateHandle
@@ -82,20 +97,6 @@ namespace ZoomableImageViewer
                 m_ShowSideHandles = value;
                 updateHandleVisibility();
             }
-        }
-
-        private void updateHandleVisibility()
-        {
-            m_topleft.Visible = m_allowResize;
-            m_top.Visible = m_ShowSideHandles & m_allowResize;
-            m_topright.Visible = m_allowResize;
-            m_right.Visible = m_ShowSideHandles & m_allowResize;
-            m_bottomright.Visible = m_allowResize;
-            m_bottom.Visible = m_ShowSideHandles & m_allowResize;
-            m_bottomleft.Visible = m_allowResize;
-            m_left.Visible = m_ShowSideHandles & m_allowResize;
-            m_center.Visible = m_ShowCenterHandle;
-            m_rotate.Visible = m_ShowRotateHandle;
         }
 
         public float HandleSize
@@ -131,7 +132,70 @@ namespace ZoomableImageViewer
         }
 
         public float RotationHandleLength { get; private set; } = 50f;
+        #endregion
 
+        #region rectangle access
+        public RectangleF Rectangle {
+            get { return new RectangleF(m_xc - m_width / 2, m_yc - m_height / 2, m_width, m_height); }
+            set
+            {
+                m_xc = value.X + value.Width / 2;
+                m_yc = value.Y + value.Height / 2;
+                m_width = value.Width;
+                m_height = value.Height;
+                rearrangeHandles(-1);
+            }
+        }
+
+        public float XC
+        {
+            get { return m_xc; }
+            set { 
+                m_xc = value;
+                rearrangeHandles(-1);
+            }
+        }
+
+        public float YC
+        {
+            get { return m_yc; }
+            set
+            {
+                m_yc = value;
+                rearrangeHandles(-1);
+            }
+        }
+
+        public float Width
+        {
+            get { return m_width; }
+            set
+            {
+                m_width = value;
+                rearrangeHandles(-1);
+            }
+        }
+
+        public float Height
+        {
+            get { return m_height; }
+            set
+            {
+                m_height = value;
+                rearrangeHandles(-1);
+            }
+        }
+
+        public float Rotation
+        {
+            get { return m_angle; }
+            set
+            {
+                m_angle = value;
+                rearrangeHandles(-1);
+            }
+        }
+#endregion
         // Handle indices
         const int hiTopLeft = 0;
         const int hiTop = 1;
@@ -249,6 +313,20 @@ namespace ZoomableImageViewer
         public Cursor getCursor(int index)
         {
             return m_dragHandles[index].Cursor;
+        }
+
+        private void updateHandleVisibility()
+        {
+            m_topleft.Visible = m_allowResize;
+            m_top.Visible = m_ShowSideHandles & m_allowResize;
+            m_topright.Visible = m_allowResize;
+            m_right.Visible = m_ShowSideHandles & m_allowResize;
+            m_bottomright.Visible = m_allowResize;
+            m_bottom.Visible = m_ShowSideHandles & m_allowResize;
+            m_bottomleft.Visible = m_allowResize;
+            m_left.Visible = m_ShowSideHandles & m_allowResize;
+            m_center.Visible = m_ShowCenterHandle;
+            m_rotate.Visible = m_ShowRotateHandle;
         }
 
         private void rearrangeHandles(int index)
