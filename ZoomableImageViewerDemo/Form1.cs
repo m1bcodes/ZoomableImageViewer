@@ -42,12 +42,15 @@ namespace ZoomableImageViewerDemo
     public partial class Form1 : Form, IMessageFilter
     {
         Image m_img;
+        Image m_img2;
+
         public Form1()
         {
             InitializeComponent();
             //m_img = Image.FromFile(@"c:\Users\mibu\Desktop\DSC02921.jpg");
             
             m_img = Image.FromFile(@"..\..\test\Saturn_from_Cassini_Orbiter_(2004-10-06).jpg");
+            m_img2 = Image.FromFile(@"..\..\test\508px-Jupiter_by_Cassini-Huygens.jpg");
 
             // either use multiple overlays, or just one image:
             if (true)
@@ -66,6 +69,10 @@ namespace ZoomableImageViewerDemo
                 il.Position = new Point(300, 400);
                 il.Alpha = 0.5;
                 zoomableImageViewer1.Images.Add(il);
+
+                IImageLayer i2 = new OverlayBitmap(m_img2);
+                i2.Position = new Point(10,20);
+                zoomableImageViewer1.Images.Add(i2);
 
                 // create overlay from pointlist
                 short[] pl = new short[2*width * height];

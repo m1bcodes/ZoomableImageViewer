@@ -63,8 +63,13 @@ namespace ZoomableImageViewer
         {
             if(m_image is Bitmap)
             {
+                int lx = Point.Round(loc).X - Position.X;
+                int ly = Point.Round(loc).Y - Position.Y;
                 Bitmap bm = m_image as Bitmap;
-                return bm.GetPixel((int)loc.X, (int)loc.Y);
+                if(lx >= 0 && ly >= 0 && lx < bm.Width && ly < bm.Height)
+                {
+                    return bm.GetPixel(lx,ly);
+                }
             }
             return null;
         }
