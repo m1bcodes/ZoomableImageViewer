@@ -39,6 +39,7 @@ namespace ZoomableImageViewer
     {
         public VCursorOverlayArtwork(float position)
         {
+            Status = Status.Visible | Status.Enabled;
             Position = position;
         }
 
@@ -69,12 +70,13 @@ namespace ZoomableImageViewer
             Position = newLocation.X;
         }
 
-        public void Paint(PaintEventArgs e, Func<PointF, PointF> abs2scr, bool selecte)
+        public void Paint(PaintEventArgs e, Func<PointF, PointF> abs2scr)
         {
             float pos = abs2scr(new PointF(Position, 0)).X;
             e.Graphics.DrawLine(Pens.Yellow, pos, e.Graphics.ClipBounds.Top, pos, e.Graphics.ClipBounds.Bottom);
         }
 
         public float Position { get; set; }
+        public Status Status { get; set; }
     }
 }

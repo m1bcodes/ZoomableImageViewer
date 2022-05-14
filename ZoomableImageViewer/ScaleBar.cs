@@ -12,6 +12,7 @@ namespace ZoomableImageViewer
     {
         public HScaleBar(float scale, string text, Color color)
         {
+            Status = Status.Visible | Status.Enabled;
             Scale = scale;
             Text = text;
             Color = color;
@@ -37,7 +38,7 @@ namespace ZoomableImageViewer
         {            
         }
 
-        public virtual void Paint(PaintEventArgs e, Func<PointF, PointF> abs2scr, bool selected)
+        public virtual void Paint(PaintEventArgs e, Func<PointF, PointF> abs2scr)
         {
             float number;
             float width;
@@ -132,6 +133,7 @@ namespace ZoomableImageViewer
         public int MinWidth { get; set; }
         public int MaxWidth { get; set; }
         public int Height { get; set; }
+        public Status Status { get; set; }
 
         protected float[] m_numbers = new float[] { 1, 2, 3, 4, 5 };
         protected float[] m_decades = new float[] { 1e-12f, 1e-9f, 1e-6f, 1e-3f, 1, 1e3f, 1e6f, 1e9f, 1e12f };
@@ -157,7 +159,7 @@ namespace ZoomableImageViewer
             base.getScalebarSize(f, out number, out width);
         }
 
-        public override void Paint(PaintEventArgs e, Func<PointF, PointF> abs2scr, bool selected)
+        public override void Paint(PaintEventArgs e, Func<PointF, PointF> abs2scr)
         {
             float number;
             float width;

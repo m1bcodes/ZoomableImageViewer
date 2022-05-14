@@ -132,6 +132,9 @@ namespace ZoomableImageViewer
         }
 
         public float RotationHandleLength { get; private set; } = 50f;
+
+        public Status Status { get; set; }
+
         #endregion
 
         #region rectangle access
@@ -195,7 +198,8 @@ namespace ZoomableImageViewer
                 rearrangeHandles(-1);
             }
         }
-#endregion
+        
+        #endregion
         // Handle indices
         const int hiTopLeft = 0;
         const int hiTop = 1;
@@ -211,6 +215,8 @@ namespace ZoomableImageViewer
 
         public RectangleOverlayArtwork(Rectangle rect, float angle, Color color)
         {
+            Status = Status.Enabled | Status.Visible;
+
             m_xc = rect.X + rect.Width / 2;
             m_yc = rect.Y + rect.Height / 2;
             m_width = rect.Width;
@@ -238,38 +244,41 @@ namespace ZoomableImageViewer
             rearrangeHandles(index);
         }
 
-        public void Paint(PaintEventArgs e, Func<PointF, PointF> abs2scr, bool selected)
+        public void Paint(PaintEventArgs e, Func<PointF, PointF> abs2scr)
         {
-            Pen pen = new Pen(m_color, selected ? 3 : 1);
+            Pen pen = new Pen(m_color, Status.HasFlag(Status.Selected) ? 3 : 1);
 
             e.Graphics.DrawLine(pen, abs2scr(m_topleft.Location), abs2scr(m_topright.Location));
             e.Graphics.DrawLine(pen, abs2scr(m_topright.Location), abs2scr(m_bottomright.Location));
             e.Graphics.DrawLine(pen, abs2scr(m_bottomright.Location), abs2scr(m_bottomleft.Location));
             e.Graphics.DrawLine(pen, abs2scr(m_bottomleft.Location), abs2scr(m_topleft.Location));
 
-            m_topleft.Draw(e.Graphics, abs2scr);
-            m_topright.Draw(e.Graphics, abs2scr);
-            m_bottomright.Draw(e.Graphics, abs2scr);
-            m_bottomleft.Draw(e.Graphics, abs2scr);
-            if(ShowSideHandles)
+            // dont draw the handles, if artwork is disabled.
+            if (Status.HasFlag(Status.Enabled))
             {
-                m_top.Draw(e.Graphics, abs2scr);
-                m_right.Draw(e.Graphics, abs2scr);
-                m_bottom.Draw(e.Graphics, abs2scr);
-                m_left.Draw(e.Graphics, abs2scr);
+                m_topleft.Draw(e.Graphics, abs2scr);
+                m_topright.Draw(e.Graphics, abs2scr);
+                m_bottomright.Draw(e.Graphics, abs2scr);
+                m_bottomleft.Draw(e.Graphics, abs2scr);
+                if (ShowSideHandles)
+                {
+                    m_top.Draw(e.Graphics, abs2scr);
+                    m_right.Draw(e.Graphics, abs2scr);
+                    m_bottom.Draw(e.Graphics, abs2scr);
+                    m_left.Draw(e.Graphics, abs2scr);
+                }
+                if (ShowCenterHandle)
+                {
+                    m_center.Draw(e.Graphics, abs2scr);
+                }
+                if (ShowRotateHandle)
+                {
+                    PointF pr = abs2scr(m_right.Location);
+                    PointF prot = calcLocationOfRotateHandle(abs2scr);
+                    e.Graphics.DrawLine(pen, pr, prot);
+                    m_rotate.DrawAtScreenPosition(e.Graphics, prot, abs2scr);
+                }
             }
-            if(ShowCenterHandle)
-            {
-                m_center.Draw(e.Graphics, abs2scr);
-            }
-            if(ShowRotateHandle)
-            {
-                PointF pr = abs2scr(m_right.Location);
-                PointF prot = calcLocationOfRotateHandle(abs2scr);
-                e.Graphics.DrawLine(pen, pr, prot);
-                m_rotate.DrawAtScreenPosition(e.Graphics, prot, abs2scr);
-            }
-
         }
 
         private PointF calcLocationOfRotateHandle(Func<PointF, PointF> abs2scr)

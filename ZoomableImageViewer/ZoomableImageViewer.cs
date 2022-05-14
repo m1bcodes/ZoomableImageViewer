@@ -32,6 +32,7 @@ using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
+using System.Collections.ObjectModel;
 
 namespace ZoomableImageViewer
 {
@@ -45,8 +46,7 @@ namespace ZoomableImageViewer
         #region private declarations
         Image m_image;
         List<IImageLayer> m_imageList = new List<IImageLayer>();
-        List<IOverlayArtwork> m_overlayList = new List<IOverlayArtwork>();
-        List<IOverlayArtwork> m_selectedOverlays = new List<IOverlayArtwork>();
+        ObservableCollection<IOverlayArtwork> m_overlayList = new ObservableCollection<IOverlayArtwork>();
 
         float m_scalex = 1;
         float m_scaley = 1;
@@ -88,6 +88,13 @@ namespace ZoomableImageViewer
 
             SetStyle(ControlStyles.Selectable, true);
             TabStop = true;
+
+            m_overlayList.CollectionChanged += M_overlayList_CollectionChanged;
+        }
+
+        private void M_overlayList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            Invalidate();
         }
 
         [DllImport("user32.dll")]
@@ -165,7 +172,9 @@ namespace ZoomableImageViewer
                 Console.WriteLine("Clip rect = " + e.Graphics.ClipBounds.ToString());
                 foreach (IOverlayArtwork oa in m_overlayList)
                 {
-                    oa.Paint(e, abs2scr, m_selectedOverlays.Contains(oa));
+                    if (oa.Status.HasFlag(Status.Visible)) {
+                        oa.Paint(e, abs2scr);
+                    }
                 }
 
                 if(Focused)
@@ -181,7 +190,7 @@ namespace ZoomableImageViewer
         {
             foreach (IOverlayArtwork ioa in m_overlayList)
             {
-                if (ioa.findHandle(location, abs2scr, out index, out clickOffset))
+                if (ioa.Status.HasFlag(Status.Enabled | Status.Visible) && ioa.findHandle(location, abs2scr, out index, out clickOffset))
                 {
                     oa = ioa;
                     return true;
@@ -302,8 +311,8 @@ namespace ZoomableImageViewer
                         m_dragOa = oa;
                         m_dragIndex = index;
                         e_OverArtworkSelectedEventHandler?.Invoke(oa);
-                        m_selectedOverlays.Clear();
-                        m_selectedOverlays.Add(oa);
+                        DeselectAllOverlays();
+                        oa.Status |= Status.Selected;
                         Invalidate();
                     }
                 }
@@ -430,34 +439,16 @@ namespace ZoomableImageViewer
 
         public List<IImageLayer> Images => m_imageList;
 
+        public ICollection<IOverlayArtwork> Overlays => m_overlayList;
+
         #region list access
-        public void AddOverlay(IOverlayArtwork newOverlay)
+
+        public void DeselectAllOverlays()
         {
-            m_overlayList.Add(newOverlay);
-            Invalidate();
+            foreach (var oa in m_overlayList)
+                oa.Status &= ~Status.Selected;
         }
 
-        public void RemoveOverlay(IOverlayArtwork removeOverlay)
-        {
-            m_selectedOverlays.Remove(removeOverlay);
-            m_overlayList.Remove(removeOverlay);
-            Invalidate();
-        }
-
-        public IReadOnlyCollection<IOverlayArtwork> SelectedOverlays {  get { return m_selectedOverlays.AsReadOnly(); } }
-
-        public void SelectOverlay(IOverlayArtwork oa, bool select = true)
-        {
-            if (select)
-            {
-                m_selectedOverlays.Add(oa);
-            }
-            else
-            {
-                m_selectedOverlays.Remove(oa);
-            }
-            Invalidate();
-        }
         #endregion
 
         public float DisplayScale

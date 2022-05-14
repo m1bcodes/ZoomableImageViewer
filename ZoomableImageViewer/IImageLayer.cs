@@ -44,9 +44,6 @@ namespace ZoomableImageViewer
         double Alpha
         { get; set; }
 
-        double Scale
-        { get; set; }
-
         object getValueUnderCursor(PointF loc);
     }
 }

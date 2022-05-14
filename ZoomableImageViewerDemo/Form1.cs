@@ -71,7 +71,7 @@ namespace ZoomableImageViewerDemo
                 zoomableImageViewer1.Images.Add(il);
 
                 IImageLayer i2 = new OverlayBitmap(m_img2);
-                i2.Position = new Point(10,20);
+                i2.Position = new Point(1700,800);
                 zoomableImageViewer1.Images.Add(i2);
 
                 // create overlay from pointlist
@@ -104,18 +104,18 @@ namespace ZoomableImageViewerDemo
             // create overlay artwork
             RectangleOverlayArtwork oa = new RectangleOverlayArtwork(new Rectangle(0, 0, 200, 300), 30f / 180f * 3.14159f, Color.Yellow);
             propertyGrid1.SelectedObject = oa;
-            zoomableImageViewer1.AddOverlay(oa);
+            zoomableImageViewer1.Overlays.Add(oa);
 
             ZoomableImageViewer.HScaleBar hs = new ZoomableImageViewer.HScaleBar(1, "Hallo {0} {1}m", Color.Green);
             hs.Scale = 10e-9f;
-            zoomableImageViewer1.AddOverlay(hs);
+            zoomableImageViewer1.Overlays.Add(hs);
 
             ZoomableImageViewer.HScaleBar vs = new ZoomableImageViewer.VScaleBar(1, "Vallo {0} {1}m", Color.Green);
             vs.Scale = 10e-9f;
-            zoomableImageViewer1.AddOverlay(vs);
+            zoomableImageViewer1.Overlays.Add(vs);
 
             ZoomableImageViewer.VCursorOverlayArtwork vc = new VCursorOverlayArtwork(0);
-            zoomableImageViewer1.AddOverlay(vc);
+            zoomableImageViewer1.Overlays.Add(vc);
 
             toolStrip1.Items.Add(new ToolStripSeparator());
             zoomableImageViewer1.AppendToolStrip(toolStrip1);
@@ -193,16 +193,13 @@ namespace ZoomableImageViewerDemo
         private void toolStripAddOverlay_Click(object sender, EventArgs e)
         {
             RectangleOverlayArtwork oa = new RectangleOverlayArtwork(new Rectangle(400, 500, 200, 300), 0f / 180f * 3.14159f, Color.Red);
-            zoomableImageViewer1.AddOverlay(oa);
+            zoomableImageViewer1.Overlays.Add(oa);
         }
 
         private void toolStripRemoveOverlay_Click(object sender, EventArgs e)
         {
-            var selected = zoomableImageViewer1.SelectedOverlays.ToList();
-            foreach(var oa in selected)
-            {
-                zoomableImageViewer1.RemoveOverlay(oa);
-            }
+            foreach(var oa in zoomableImageViewer1.Overlays.Where((oa) => oa.Status.HasFlag(Status.Selected)).ToList())
+                zoomableImageViewer1.Overlays.Remove(oa);
         }
 
         private void toolStripInvalidate_Click(object sender, EventArgs e)

@@ -35,6 +35,16 @@ using System.Windows.Forms;
 
 namespace ZoomableImageViewer
 {
+    [Flags]
+    public enum Status
+    {
+        None = 0,
+        Selected = 1,
+        Enabled = 2,
+        Visible = 4,
+        All = 7
+    }
+
     public interface IOverlayArtwork
     {
 
@@ -43,8 +53,7 @@ namespace ZoomableImageViewer
         /// </summary>
         /// <param name="e">Normal OnPaint arguments</param>
         /// <param name="abs2scr">Transformation function, which transforms absolute to screen coordinates.</param>
-        /// <param name="selected">informs artwork, if it is currently selected.</param>
-        void Paint(PaintEventArgs e, Func<PointF, PointF> abs2scr, bool selected);
+        void Paint(PaintEventArgs e, Func<PointF, PointF> abs2scr);
 
         /// <summary>
         /// finds which handle the mouse if over (if any). Returns -1 if no handle was found.
@@ -70,6 +79,10 @@ namespace ZoomableImageViewer
         /// <param name="index"></param>
         /// <param name="newLocation"></param>
         void moveHandle(int index, PointF newLocation);
+
+        Status Status { get; set; }
     }
 
 }
+// Flags
+// selected, enabled, visible
