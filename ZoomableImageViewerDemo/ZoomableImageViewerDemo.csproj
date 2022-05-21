@@ -80,9 +80,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ZoomableImageViewer\ZoomableImageViewer.csproj">
+    <ProjectReference Include="..\ZoomImageViewer\ZoomImageViewer.csproj">
       <Project>{c79f3605-ce25-49f4-9944-a84952aaf084}</Project>
-      <Name>ZoomableImageViewer</Name>
+      <Name>ZoomImageViewer</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

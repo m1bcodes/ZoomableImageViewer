@@ -125,6 +125,8 @@ namespace ZoomImageViewer
 
         public Status Status { get; set; }
 
+        public Font Font { get; set; } = SystemFonts.DefaultFont;
+        public string Caption { get; set; }
         #endregion
 
         #region rectangle access
@@ -242,6 +244,16 @@ namespace ZoomImageViewer
             e.Graphics.DrawLine(pen, fAbs2Scr(this.dhTopRight.Location), fAbs2Scr(this.dhBottomRight.Location));
             e.Graphics.DrawLine(pen, fAbs2Scr(this.dhBottomRight.Location), fAbs2Scr(this.dhBottomLeft.Location));
             e.Graphics.DrawLine(pen, fAbs2Scr(this.dhBottomLeft.Location), fAbs2Scr(this.dhTopLeft.Location));
+
+            if (!string.IsNullOrEmpty(this.Caption))
+            {
+                Graphics g = e.Graphics;
+                var savedTransform = g.Transform;
+                g.TranslateTransform(fAbs2Scr(dhTopLeft.Location).X, fAbs2Scr(dhTopLeft.Location).Y);
+                g.RotateTransform((float)(Rotation / Math.PI * 180.0));
+                g.DrawString(Caption, this.Font, new SolidBrush(Color), 0, -this.Font.Height - HandleSize / 2 - 1);
+                g.Transform = savedTransform;
+            }
 
             // don't draw the handles, if artwork is disabled.
             if (this.Status.HasFlag(Status.Enabled))

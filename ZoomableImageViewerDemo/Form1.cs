@@ -35,7 +35,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using ZoomableImageViewer;
+using ZoomImageViewer;
 
 namespace ZoomableImageViewerDemo
 {
@@ -55,7 +55,7 @@ namespace ZoomableImageViewerDemo
             // either use multiple overlays, or just one image:
             if (true)
             {
-                zoomableImageViewer1.Images.Add(new OverlayBitmap(m_img));
+                zoomImageViewer1.Images.Add(new OverlayBitmap(m_img));
 
                 // create grayscale bitmap
                 int width = 200;
@@ -65,14 +65,14 @@ namespace ZoomableImageViewerDemo
                     for (int ix = 0; ix < width; ix++)
                         data[ix + iy * width] = (byte)(ix + iy);
 
-                IImageLayer il = new OverlayGrayscale(width, height, data);
+                IImageLayer il = new OverlayGrayScale(width, height, data);
                 il.Position = new Point(300, 400);
                 il.Alpha = 0.5;
-                zoomableImageViewer1.Images.Add(il);
+                zoomImageViewer1.Images.Add(il);
 
                 IImageLayer i2 = new OverlayBitmap(m_img2);
                 i2.Position = new Point(1700,800);
-                zoomableImageViewer1.Images.Add(i2);
+                zoomImageViewer1.Images.Add(i2);
 
                 // create overlay from pointlist
                 short[] pl = new short[2*width * height];
@@ -92,33 +92,33 @@ namespace ZoomableImageViewerDemo
                 il = new OverlayPointList(pl, Color.Yellow);
                 il.Position = new Point(600, 200);
                 il.Alpha = 0.7;
-                zoomableImageViewer1.Images.Add(il);
+                zoomImageViewer1.Images.Add(il);
 
-                zoomableImageViewer1.updateImageList();
+                zoomImageViewer1.UpdateImageList();
             }
             else
             {
-                zoomableImageViewer1.Image = m_img;
+                zoomImageViewer1.Image = m_img;
             }
 
             // create overlay artwork
             RectangleOverlayArtwork oa = new RectangleOverlayArtwork(new Rectangle(0, 0, 200, 300), 30f / 180f * 3.14159f, Color.Yellow);
             propertyGrid1.SelectedObject = oa;
-            zoomableImageViewer1.Overlays.Add(oa);
+            zoomImageViewer1.Overlays.Add(oa);
 
-            ZoomableImageViewer.HScaleBar hs = new ZoomableImageViewer.HScaleBar(1, "Hallo {0} {1}m", Color.Green);
+            ZoomImageViewer.HScaleBar hs = new ZoomImageViewer.HScaleBar(1, "Hallo {0} {1}m", Color.Green);
             hs.Scale = 10e-9f;
-            zoomableImageViewer1.Overlays.Add(hs);
+            zoomImageViewer1.Overlays.Add(hs);
 
-            ZoomableImageViewer.HScaleBar vs = new ZoomableImageViewer.VScaleBar(1, "Vallo {0} {1}m", Color.Green);
+            ZoomImageViewer.HScaleBar vs = new ZoomImageViewer.VScaleBar(1, "Vallo {0} {1}m", Color.Green);
             vs.Scale = 10e-9f;
-            zoomableImageViewer1.Overlays.Add(vs);
+            zoomImageViewer1.Overlays.Add(vs);
 
-            ZoomableImageViewer.VCursorOverlayArtwork vc = new VCursorOverlayArtwork(0);
-            zoomableImageViewer1.Overlays.Add(vc);
+            ZoomImageViewer.VCursorOverlayArtwork vc = new VCursorOverlayArtwork(0);
+            zoomImageViewer1.Overlays.Add(vc);
 
             toolStrip1.Items.Add(new ToolStripSeparator());
-            zoomableImageViewer1.AppendToolStrip(toolStrip1);
+            zoomImageViewer1.AppendToolStrip(toolStrip1);
             Application.AddMessageFilter(this);
         }
 
@@ -130,9 +130,9 @@ namespace ZoomableImageViewerDemo
                 Point pos = Cursor.Position; //  new Point(m.LParam.ToInt32() & 0xffff, m.LParam.ToInt32() >> 16);
                 IntPtr hWnd = WindowFromPoint(pos);
                 // if mouse is over the PixelGrid, send the envent to the handler of the main form.
-                if (hWnd != IntPtr.Zero && Control.FromHandle(hWnd) == zoomableImageViewer1)
+                if (hWnd != IntPtr.Zero && Control.FromHandle(hWnd) == zoomImageViewer1)
                 {
-                    SendMessage(this.zoomableImageViewer1.Handle, m.Msg, m.WParam, m.LParam);
+                    SendMessage(this.zoomImageViewer1.Handle, m.Msg, m.WParam, m.LParam);
                     return true;
                 }
             }
@@ -147,64 +147,66 @@ namespace ZoomableImageViewerDemo
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            zoomableImageViewer1.Fit = false;
-            zoomableImageViewer1.DisplayScale = 1;
+            zoomImageViewer1.Fit = false;
+            zoomImageViewer1.DisplayScale = 1;
         }
 
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
-            zoomableImageViewer1.Fit = true;
+            zoomImageViewer1.Fit = true;
         }
 
         private void toolStripButton3_Click(object sender, EventArgs e)
         {
-            zoomableImageViewer1.Fit = false;
-            zoomableImageViewer1.DisplayScale *= 1.1f;
+            zoomImageViewer1.Fit = false;
+            zoomImageViewer1.DisplayScale *= 1.1f;
         }
 
         private void toolStripButton4_Click(object sender, EventArgs e)
         {
-            zoomableImageViewer1.Fit = false;
-            zoomableImageViewer1.DisplayScale /= 1.1f;
+            zoomImageViewer1.Fit = false;
+            zoomImageViewer1.DisplayScale /= 1.1f;
         }
 
         private void propertyGrid1_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
-            zoomableImageViewer1.Invalidate();
+            zoomImageViewer1.Invalidate();
             
-        }
-
-        private void zoomableImageViewer1_e_MousePositionChanged(object sender, PointF location, object valueUnderCursor)
-        {
-            toolStripStatusLabel1.Text = string.Format("Mouse position: ({0},{1}) : {2}", location.X, location.Y, valueUnderCursor?.ToString());
-        }
-
-        private void zoomableImageViewer1_e_OverArtworkSelectedEventHandler(IOverlayArtwork sender)
-        {
-            Console.WriteLine("OA selected");
-            propertyGrid1.SelectedObject = sender;
-        }
-
-        private void zoomableImageViewer1_e_ArtworkChanged(IOverlayArtwork sender)
-        {
-            propertyGrid1.Refresh();
         }
 
         private void toolStripAddOverlay_Click(object sender, EventArgs e)
         {
             RectangleOverlayArtwork oa = new RectangleOverlayArtwork(new Rectangle(400, 500, 200, 300), 0f / 180f * 3.14159f, Color.Red);
-            zoomableImageViewer1.Overlays.Add(oa);
+            zoomImageViewer1.Overlays.Add(oa);
         }
 
         private void toolStripRemoveOverlay_Click(object sender, EventArgs e)
         {
-            foreach(var oa in zoomableImageViewer1.Overlays.Where((oa) => oa.Status.HasFlag(Status.Selected)).ToList())
-                zoomableImageViewer1.Overlays.Remove(oa);
+            foreach(var oa in zoomImageViewer1.Overlays.Where((oa) => oa.Status.HasFlag(Status.Selected)).ToList())
+                zoomImageViewer1.Overlays.Remove(oa);
         }
 
         private void toolStripInvalidate_Click(object sender, EventArgs e)
         {
-            zoomableImageViewer1.Invalidate();
+            zoomImageViewer1.Invalidate();
+        }
+
+        private void zoomImageViewer1_OverlayArtworkChanged(IOverlayArtwork sender)
+        {
+            Console.WriteLine("OA changed");
+            propertyGrid1.Update();
+
+        }
+
+        private void zoomImageViewer1_OverlayArtworkSelectionChanged(IOverlayArtwork sender)
+        {
+            Console.WriteLine("OA selected");
+            propertyGrid1.SelectedObject = sender;
+        }
+
+        private void zoomImageViewer1_MousePositionChanged(object sender, PointF location, object valueUnderCursor)
+        {
+            toolStripStatusLabel1.Text = string.Format("Mouse position: ({0},{1}) : {2}", location.X, location.Y, valueUnderCursor?.ToString());
         }
     }
 }
