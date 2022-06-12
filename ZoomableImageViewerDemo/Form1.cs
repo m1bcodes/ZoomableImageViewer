@@ -208,5 +208,18 @@ namespace ZoomableImageViewerDemo
         {
             toolStripStatusLabel1.Text = string.Format("Mouse position: ({0},{1}) : {2}", location.X, location.Y, valueUnderCursor?.ToString());
         }
+
+        private void btAllowAdd_Click(object sender, EventArgs e)
+        {
+            btAllowAdd.Checked = !btAllowAdd.Checked;
+            if(btAllowAdd.Checked)
+            {
+                zoomImageViewer1.OverlayArtworkCreator = RectangleOverlayArtwork.RectangleCreator;
+
+            } else
+            {
+                zoomImageViewer1.OverlayArtworkCreator = null;
+            }
+        }
     }
 }

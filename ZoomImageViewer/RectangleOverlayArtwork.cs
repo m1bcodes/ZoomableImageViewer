@@ -516,5 +516,15 @@ namespace ZoomImageViewer
                     cosTheta * (pointToRotate.Y - centerPoint.Y) + centerPoint.Y)
             };
         }
-    }
+
+        /// <summary>
+        /// default implementation for the ZoomImageViewer.OverlayArtworkCreator
+        /// </summary>
+        public static RectangleOverlayArtwork RectangleCreator(PointF startPoint, out int handleIndex)
+        {
+            RectangleOverlayArtwork ra = new RectangleOverlayArtwork(new Rectangle((int)startPoint.X, (int)startPoint.Y, 0, 0), 0, Color.Red);
+            handleIndex = RectangleOverlayArtwork.hiBottomRight;
+            return ra;
+        }
+}
 }

@@ -42,6 +42,16 @@ namespace ZoomImageViewer
     public delegate void OverArtworkSelectedEventHandler(IOverlayArtwork sender);
     public delegate void ArtworkChanged(IOverlayArtwork sender);
 
+    /// <summary>
+    /// Called  to create a new overlay element, if the user clicks on the drawing area and does not hit another drag handle.
+    /// Then it is assumed, a new artwork is to be created via the supplied delegate to OverlayArtworkCreator.
+    /// </summary>
+    /// <param name="startPoint">location of the mouse click.</param>
+    /// <param name="dragHandleIndex">with the drag handle, which is now dragged. For example to create a rectangle, 
+    /// the upper left corner is set to startPoint and the handle at the lower right corner is returned</param>
+    /// <returns>the new object of type IOverlayArtork.</returns>
+    public delegate IOverlayArtwork OverlayArtworkCreator(PointF startPoint, out int dragHandleIndex);
+
     public class ZoomImageViewer : ScrollableControl
     {
         #region private declarations
@@ -298,14 +308,28 @@ namespace ZoomImageViewer
                 }
                 else
                 {
-                    if (FindHandle(loc, out IOverlayArtwork oa, out int index, out this.dragHandleMouseOffset))
+                    IOverlayArtwork oa = null;
+                    int dragHandleIndex;
+                    if (OverlayArtworkCreator != null)
+                    {
+                        // create new overlay
+                        oa = OverlayArtworkCreator(loc, out dragHandleIndex);
+                        if (oa != null)
+                        {
+                            this.Overlays.Add(oa);
+                        }
+                    } else
+                    {
+                        // modify existing overlay
+                        FindHandle(loc, out oa, out dragHandleIndex, out this.dragHandleMouseOffset);
+                    }
+                    if (oa != null)
                     {
                         this.dragActive = DragMode.DragHandle;
                         this.dragOa = oa;
-                        this.dragIndex = index;
+                        this.dragIndex = dragHandleIndex;
                         this.OverlayArtworkSelectionChanged?.Invoke(oa);
-                        DeselectAllOverlays();
-                        oa.Status |= Status.Selected;
+                        SelectOverlay(oa);
                         Invalidate();
                     }
                 }
@@ -441,11 +465,19 @@ namespace ZoomImageViewer
 
         #region list access
 
-        public void DeselectAllOverlays()
+        /// <summary>
+        /// deselect all currently selected artworks and select the specified one.
+        /// </summary>
+        /// <param name="selectedOa">artwork to select. To select none, supply null</param>
+        public void SelectOverlay(IOverlayArtwork selectedOa)
         {
             foreach (var oa in this.overlayList)
             {
                 oa.Status &= ~Status.Selected;
+            }
+            if(selectedOa!=null)
+            {
+                selectedOa.Status |= Status.Selected;
             }
         }
 
@@ -501,6 +533,8 @@ namespace ZoomImageViewer
         }
 
         public bool ZoomWindowEnabled { get; set; }
+
+        public OverlayArtworkCreator OverlayArtworkCreator { get; set; }
 
         public void UpdateImageList()
         {

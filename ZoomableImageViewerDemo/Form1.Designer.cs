@@ -40,9 +40,10 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
+            this.zoomImageViewer1 = new ZoomImageViewer.ZoomImageViewer();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.zoomImageViewer1 = new ZoomImageViewer.ZoomImageViewer();
+            this.btAllowAdd = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -61,7 +62,8 @@
             this.toolStripButton4,
             this.toolStripButton5,
             this.toolStripButton6,
-            this.toolStripInvalidate});
+            this.toolStripInvalidate,
+            this.btAllowAdd});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(649, 25);
@@ -174,22 +176,6 @@
             this.propertyGrid1.TabIndex = 0;
             this.propertyGrid1.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid1_PropertyValueChanged);
             // 
-            // statusStrip1
-            // 
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 469);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(649, 22);
-            this.statusStrip1.TabIndex = 2;
-            this.statusStrip1.Text = "statusStrip1";
-            // 
-            // toolStripStatusLabel1
-            // 
-            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(118, 17);
-            this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
-            // 
             // zoomImageViewer1
             // 
             this.zoomImageViewer1.DisplayScale = 1F;
@@ -208,6 +194,32 @@
             this.zoomImageViewer1.MousePositionChanged += new ZoomImageViewer.MousePositionChangedEventHandler(this.zoomImageViewer1_MousePositionChanged);
             this.zoomImageViewer1.OverlayArtworkSelectionChanged += new ZoomImageViewer.OverArtworkSelectedEventHandler(this.zoomImageViewer1_OverlayArtworkSelectionChanged);
             this.zoomImageViewer1.OverlayArtworkChanged += new ZoomImageViewer.ArtworkChanged(this.zoomImageViewer1_OverlayArtworkChanged);
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel1});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 469);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(649, 22);
+            this.statusStrip1.TabIndex = 2;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(118, 17);
+            this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
+            // 
+            // btAllowAdd
+            // 
+            this.btAllowAdd.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btAllowAdd.Image = ((System.Drawing.Image)(resources.GetObject("btAllowAdd.Image")));
+            this.btAllowAdd.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btAllowAdd.Name = "btAllowAdd";
+            this.btAllowAdd.Size = new System.Drawing.Size(66, 22);
+            this.btAllowAdd.Text = "Allow Add";
+            this.btAllowAdd.Click += new System.EventHandler(this.btAllowAdd_Click);
             // 
             // Form1
             // 
@@ -249,6 +261,7 @@
         private System.Windows.Forms.ToolStripButton toolStripButton6;
         private System.Windows.Forms.ToolStripButton toolStripInvalidate;
         private ZoomImageViewer.ZoomImageViewer zoomImageViewer1;
+        private System.Windows.Forms.ToolStripButton btAllowAdd;
     }
 }
 
