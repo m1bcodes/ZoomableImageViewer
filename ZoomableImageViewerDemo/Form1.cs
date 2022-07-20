@@ -100,6 +100,9 @@ namespace ZoomableImageViewerDemo
             {
                 zoomImageViewer1.Image = m_img;
             }
+            zoomImageViewer2.Image = m_img;
+            zoomImageViewer1.FieldOfViewChanged += zoomImageViewer2.SetFieldOfView;
+            zoomImageViewer2.FieldOfViewChanged+=zoomImageViewer1.SetFieldOfView;
 
             // create overlay artwork
             RectangleOverlayArtwork oa = new RectangleOverlayArtwork(new Rectangle(0, 0, 200, 300), 30f / 180f * 3.14159f, Color.Yellow);

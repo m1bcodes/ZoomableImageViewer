@@ -37,13 +37,15 @@
             this.toolStripButton5 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton6 = new System.Windows.Forms.ToolStripButton();
             this.toolStripInvalidate = new System.Windows.Forms.ToolStripButton();
+            this.btAllowAdd = new System.Windows.Forms.ToolStripButton();
             this.panel1 = new System.Windows.Forms.Panel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
             this.zoomImageViewer1 = new ZoomImageViewer.ZoomImageViewer();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.btAllowAdd = new System.Windows.Forms.ToolStripButton();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.zoomImageViewer2 = new ZoomImageViewer.ZoomImageViewer();
             this.toolStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -51,6 +53,10 @@
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+            this.splitContainer2.Panel1.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
+            this.splitContainer2.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStrip1
@@ -140,6 +146,16 @@
             this.toolStripInvalidate.Text = "Invalidate";
             this.toolStripInvalidate.Click += new System.EventHandler(this.toolStripInvalidate_Click);
             // 
+            // btAllowAdd
+            // 
+            this.btAllowAdd.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btAllowAdd.Image = ((System.Drawing.Image)(resources.GetObject("btAllowAdd.Image")));
+            this.btAllowAdd.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btAllowAdd.Name = "btAllowAdd";
+            this.btAllowAdd.Size = new System.Drawing.Size(66, 22);
+            this.btAllowAdd.Text = "Allow Add";
+            this.btAllowAdd.Click += new System.EventHandler(this.btAllowAdd_Click);
+            // 
             // panel1
             // 
             this.panel1.Controls.Add(this.splitContainer1);
@@ -161,7 +177,7 @@
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.zoomImageViewer1);
+            this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
             this.splitContainer1.Size = new System.Drawing.Size(649, 466);
             this.splitContainer1.SplitterDistance = 216;
             this.splitContainer1.TabIndex = 0;
@@ -185,7 +201,8 @@
             this.zoomImageViewer1.Image = null;
             this.zoomImageViewer1.Location = new System.Drawing.Point(0, 0);
             this.zoomImageViewer1.Name = "zoomImageViewer1";
-            this.zoomImageViewer1.Size = new System.Drawing.Size(429, 466);
+            this.zoomImageViewer1.OverlayArtworkCreator = null;
+            this.zoomImageViewer1.Size = new System.Drawing.Size(233, 466);
             this.zoomImageViewer1.Square = true;
             this.zoomImageViewer1.TabIndex = 0;
             this.zoomImageViewer1.Text = "zoomImageViewer1";
@@ -211,15 +228,39 @@
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(118, 17);
             this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
             // 
-            // btAllowAdd
+            // splitContainer2
             // 
-            this.btAllowAdd.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.btAllowAdd.Image = ((System.Drawing.Image)(resources.GetObject("btAllowAdd.Image")));
-            this.btAllowAdd.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btAllowAdd.Name = "btAllowAdd";
-            this.btAllowAdd.Size = new System.Drawing.Size(66, 22);
-            this.btAllowAdd.Text = "Allow Add";
-            this.btAllowAdd.Click += new System.EventHandler(this.btAllowAdd_Click);
+            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer2.Name = "splitContainer2";
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.zoomImageViewer1);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.zoomImageViewer2);
+            this.splitContainer2.Size = new System.Drawing.Size(429, 466);
+            this.splitContainer2.SplitterDistance = 233;
+            this.splitContainer2.TabIndex = 0;
+            // 
+            // zoomImageViewer2
+            // 
+            this.zoomImageViewer2.DisplayScale = 1F;
+            this.zoomImageViewer2.DisplayScaleAnisotropic = ((System.Drawing.PointF)(resources.GetObject("zoomImageViewer2.DisplayScaleAnisotropic")));
+            this.zoomImageViewer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.zoomImageViewer2.Fit = true;
+            this.zoomImageViewer2.Image = null;
+            this.zoomImageViewer2.Location = new System.Drawing.Point(0, 0);
+            this.zoomImageViewer2.Name = "zoomImageViewer2";
+            this.zoomImageViewer2.OverlayArtworkCreator = null;
+            this.zoomImageViewer2.Size = new System.Drawing.Size(192, 466);
+            this.zoomImageViewer2.Square = true;
+            this.zoomImageViewer2.TabIndex = 1;
+            this.zoomImageViewer2.Text = "zoomImageViewer2";
+            this.zoomImageViewer2.ZoomStep = 1.1F;
+            this.zoomImageViewer2.ZoomWindowEnabled = false;
             // 
             // Form1
             // 
@@ -240,6 +281,10 @@
             this.splitContainer1.ResumeLayout(false);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
+            this.splitContainer2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -262,6 +307,8 @@
         private System.Windows.Forms.ToolStripButton toolStripInvalidate;
         private ZoomImageViewer.ZoomImageViewer zoomImageViewer1;
         private System.Windows.Forms.ToolStripButton btAllowAdd;
+        private System.Windows.Forms.SplitContainer splitContainer2;
+        private ZoomImageViewer.ZoomImageViewer zoomImageViewer2;
     }
 }
 

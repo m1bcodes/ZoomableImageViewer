@@ -52,6 +52,11 @@ namespace ZoomImageViewer
     /// <returns>the new object of type IOverlayArtork.</returns>
     public delegate IOverlayArtwork OverlayArtworkCreator(PointF startPoint, out int dragHandleIndex);
 
+    /// <summary>
+    /// called whenever the field of view has changed
+    /// </summary>
+    public delegate void FieldOfViewChanged(float scaleX, float scaleY, float scrollPosX, float scrollPosY);
+
     public class ZoomImageViewer : ScrollableControl
     {
         #region private declarations
@@ -80,6 +85,8 @@ namespace ZoomImageViewer
         private IOverlayArtwork dragOa;
         private int dragIndex = -1;
         private ToolStripButton btnZoomWindow;
+        private RectangleF oldFov = new RectangleF();
+        private bool suppressFieldOfViewChangedEvent = false;
 
         // image cache
         Image imgCache;
@@ -90,6 +97,7 @@ namespace ZoomImageViewer
         public event MousePositionChangedEventHandler MousePositionChanged;
         public event OverArtworkSelectedEventHandler OverlayArtworkSelectionChanged;
         public event ArtworkChanged OverlayArtworkChanged;
+        public event FieldOfViewChanged FieldOfViewChanged;
 
         public ZoomImageViewer()
         {
@@ -189,6 +197,21 @@ namespace ZoomImageViewer
                     rc.Inflate(-2, -2);
                     ControlPaint.DrawFocusRectangle(e.Graphics, rc);
                 }
+
+                if (FieldOfViewChanged != null)
+                {
+                    RectangleF fov = new RectangleF(this.scaleX, this.scaleY, this.AutoScrollPosition.X, this.AutoScrollPosition.Y);
+                    if (!RectangleF.Equals(fov, this.oldFov))
+                    {
+                        if(!suppressFieldOfViewChangedEvent)
+                        {
+                            FieldOfViewChanged(this.scaleX, this.scaleY, this.AutoScrollPosition.X, this.AutoScrollPosition.Y);
+                        }
+                        this.oldFov = fov;
+                        this.suppressFieldOfViewChangedEvent = false;
+                    }
+                }
+
             }
         }
 
@@ -521,6 +544,23 @@ namespace ZoomImageViewer
         public float ZoomStep { get; set; } = 1.1f;
 
         public bool Square { get; set; } = true;
+
+        /// <summary>
+        /// sets the field of view. This is mainly used to syncronize two viewer via the 
+        /// FieldOfViewChangedEvent
+        /// </summary>
+        public void SetFieldOfView(float scaleX, float scaleY, float scrollPosX, float scrollPosY)
+        {
+            SuspendDrawing(this);
+            this.fit = false;
+            this.scaleX = scaleX;
+            this.scaleY = scaleY;
+            // why negative: https://stackoverflow.com/a/1041986/6792694
+            this.AutoScrollPosition = new Point(-(int)scrollPosX, -(int)scrollPosY);
+            this.suppressFieldOfViewChangedEvent = true;
+            UpdateImageParameters();
+            ResumeDrawing(this);
+        }
 
         public bool Fit
         {
