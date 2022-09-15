@@ -68,6 +68,8 @@ namespace ZoomImageViewer
         private float scaleY = 1;
 
         private bool fit = true;
+        private bool aspectFixed = true;
+        private float aspectRatio = 1.0f;
 
         // drag related stuff
         private enum DragMode
@@ -377,17 +379,24 @@ namespace ZoomImageViewer
                 float y1 = AbsX(r.Top);
                 float w = AbsX(r.Right) - AbsX(r.Left);
                 float h = AbsY(r.Bottom) - AbsY(r.Top);
-                this.Fit = false;
-                if (this.Square)
+                if (w > 0 && h > 0)
                 {
-                    this.DisplayScale = Math.Min(this.Width / w, this.Height / h);
+                    this.Fit = false;
+                    if (this.AspectFixed)
+                    {
+                        float scX = Math.Min(this.Width / w, this.Height / (h / this.AspectRatio));
+                        this.scaleX = scX;
+                        this.scaleY = scX * this.AspectRatio;
+                    }
+                    else
+                    {
+                        this.scaleX = this.Width / w;
+                        this.scaleY = this.Height / h;
+                    }
+                    UpdateImageParameters();
+                    PointF asPos = Abs2Scr(new PointF(x1, y1));
+                    this.AutoScrollPosition = new Point((int)asPos.X, (int)asPos.Y);
                 }
-                else
-                {
-                    this.DisplayScaleAnisotropic = new PointF(this.Width / w, this.Height / h);
-                }
-                PointF asPos = Abs2Scr(new PointF(x1, y1));
-                this.AutoScrollPosition = new Point((int)asPos.X, (int)asPos.Y);
                 this.dragWindowRectangle = new Rectangle() ;
             }
             if(this.dragActive == DragMode.DragHandle)
@@ -454,10 +463,10 @@ namespace ZoomImageViewer
             {
                 if (this.fit)
                 {
-                    if (this.Square)
+                    if (this.AspectFixed)
                     {
-                        this.scaleX = Math.Min((float)this.Width / this.image.Width, (float)this.Height / this.image.Height);
-                        this.scaleY = this.scaleX;
+                        this.scaleX = Math.Min((float)this.Width / this.image.Width, (float)this.Height / (this.image.Height*this.AspectRatio));
+                        this.scaleY = this.scaleX * this.AspectRatio;
                     }
                     else
                     {
@@ -506,44 +515,33 @@ namespace ZoomImageViewer
 
         #endregion
 
-        public float DisplayScale
-        {
-            get
-            {
-                if (!this.Square)
-                {
-                    throw new Exception("Can't use DisplayScale in non-Square mode");
-                }
-                return this.scaleX;
+        public float ZoomStep { get; set; } = 1.1f;
+
+        public bool AspectFixed 
+        { 
+            get 
+            { 
+                return this.aspectFixed; 
             }
             set
             {
-                this.scaleX = value;
-                this.scaleY = value;
-                UpdateImageParameters();
-            }
+                this.aspectFixed = value;
+                this.UpdateImageParameters();
+            } 
         }
 
-        public PointF DisplayScaleAnisotropic
+        public float AspectRatio
         {
-            get => new PointF(this.scaleX, this.scaleY);
-            set {
-                if (this.Square)
-                {
-                    this.scaleX = value.X;
-                    this.scaleY = this.scaleX;
-                } else
-                {
-                    this.scaleX = value.X;
-                    this.scaleY = value.Y;
-                }
-                UpdateImageParameters();
+            get
+            {
+                return this.aspectRatio;
+            }
+            set
+            {
+                this.aspectRatio = value;
+                this.UpdateImageParameters();
             }
         }
-
-        public float ZoomStep { get; set; } = 1.1f;
-
-        public bool Square { get; set; } = true;
 
         /// <summary>
         /// sets the field of view. This is mainly used to syncronize two viewer via the 
@@ -568,7 +566,7 @@ namespace ZoomImageViewer
             set
             {
                 this.fit = value;
-                UpdateImageParameters();
+                this.UpdateImageParameters();
             }
         }
 
@@ -628,19 +626,24 @@ namespace ZoomImageViewer
         private void OnToolStripZoomOut(object sender, EventArgs e)
         {
             this.Fit = false;
-            this.DisplayScaleAnisotropic = new PointF(this.DisplayScaleAnisotropic.X / this.ZoomStep, this.DisplayScaleAnisotropic.Y / this.ZoomStep);
+            this.scaleX /= this.ZoomStep;
+            this.scaleY /= this.ZoomStep;
+            UpdateImageParameters();
         }
 
         private void OnToolStripZoomIn(object sender, EventArgs e)
         {
             this.Fit = false;
-            this.DisplayScaleAnisotropic = new PointF(this.DisplayScaleAnisotropic.X * this.ZoomStep, this.DisplayScaleAnisotropic.Y * this.ZoomStep);
+            this.scaleX *= this.ZoomStep;
+            this.scaleY *= this.ZoomStep;
+            UpdateImageParameters();
         }
 
         private void OnToolStrip1to1(object sender, EventArgs e)
         {
             this.Fit = false;
-            this.DisplayScale = 1;
+            this.scaleX = 1;
+            this.scaleY = this.scaleX * this.AspectRatio;
         }
 
         private void OnToolStripFit(object sender, EventArgs e)

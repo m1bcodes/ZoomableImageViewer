@@ -194,8 +194,6 @@
             // 
             // zoomImageViewer1
             // 
-            this.zoomImageViewer1.DisplayScale = 1F;
-            this.zoomImageViewer1.DisplayScaleAnisotropic = ((System.Drawing.PointF)(resources.GetObject("zoomImageViewer1.DisplayScaleAnisotropic")));
             this.zoomImageViewer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.zoomImageViewer1.Fit = true;
             this.zoomImageViewer1.Image = null;
@@ -203,7 +201,7 @@
             this.zoomImageViewer1.Name = "zoomImageViewer1";
             this.zoomImageViewer1.OverlayArtworkCreator = null;
             this.zoomImageViewer1.Size = new System.Drawing.Size(233, 466);
-            this.zoomImageViewer1.Square = true;
+            this.zoomImageViewer1.AspectFixed = true;
             this.zoomImageViewer1.TabIndex = 0;
             this.zoomImageViewer1.Text = "zoomImageViewer1";
             this.zoomImageViewer1.ZoomStep = 1.1F;
@@ -247,8 +245,6 @@
             // 
             // zoomImageViewer2
             // 
-            this.zoomImageViewer2.DisplayScale = 1F;
-            this.zoomImageViewer2.DisplayScaleAnisotropic = ((System.Drawing.PointF)(resources.GetObject("zoomImageViewer2.DisplayScaleAnisotropic")));
             this.zoomImageViewer2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.zoomImageViewer2.Fit = true;
             this.zoomImageViewer2.Image = null;
@@ -256,7 +252,7 @@
             this.zoomImageViewer2.Name = "zoomImageViewer2";
             this.zoomImageViewer2.OverlayArtworkCreator = null;
             this.zoomImageViewer2.Size = new System.Drawing.Size(192, 466);
-            this.zoomImageViewer2.Square = true;
+            this.zoomImageViewer2.AspectFixed = true;
             this.zoomImageViewer2.TabIndex = 1;
             this.zoomImageViewer2.Text = "zoomImageViewer2";
             this.zoomImageViewer2.ZoomStep = 1.1F;

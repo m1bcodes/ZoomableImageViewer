@@ -53,7 +53,7 @@ namespace ZoomableImageViewerDemo
             m_img2 = Image.FromFile(@"..\..\test\508px-Jupiter_by_Cassini-Huygens.jpg");
 
             // either use multiple overlays, or just one image:
-            if (true)
+            if (false)
             {
                 zoomImageViewer1.Images.Add(new OverlayBitmap(m_img));
 
@@ -102,7 +102,10 @@ namespace ZoomableImageViewerDemo
             }
             zoomImageViewer2.Image = m_img;
             zoomImageViewer1.FieldOfViewChanged += zoomImageViewer2.SetFieldOfView;
-            zoomImageViewer2.FieldOfViewChanged+=zoomImageViewer1.SetFieldOfView;
+            zoomImageViewer2.FieldOfViewChanged += zoomImageViewer1.SetFieldOfView;
+
+            // zoomImageViewer1.AspectRatio = 2;
+            zoomImageViewer1.AspectFixed = false;
 
             // create overlay artwork
             RectangleOverlayArtwork oa = new RectangleOverlayArtwork(new Rectangle(0, 0, 200, 300), 30f / 180f * 3.14159f, Color.Yellow);
@@ -150,8 +153,8 @@ namespace ZoomableImageViewerDemo
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            zoomImageViewer1.Fit = false;
-            zoomImageViewer1.DisplayScale = 1;
+            //zoomImageViewer1.Fit = false;
+            //zoomImageViewer1.DisplayScale = 1;
         }
 
         private void toolStripButton2_Click(object sender, EventArgs e)
@@ -161,14 +164,14 @@ namespace ZoomableImageViewerDemo
 
         private void toolStripButton3_Click(object sender, EventArgs e)
         {
-            zoomImageViewer1.Fit = false;
-            zoomImageViewer1.DisplayScale *= 1.1f;
+            //zoomImageViewer1.Fit = false;
+            //zoomImageViewer1.DisplayScale *= 1.1f;
         }
 
         private void toolStripButton4_Click(object sender, EventArgs e)
         {
-            zoomImageViewer1.Fit = false;
-            zoomImageViewer1.DisplayScale /= 1.1f;
+            //zoomImageViewer1.Fit = false;
+            //zoomImageViewer1.DisplayScale /= 1.1f;
         }
 
         private void propertyGrid1_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
